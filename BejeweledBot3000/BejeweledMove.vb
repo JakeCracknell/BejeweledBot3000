@@ -11,6 +11,6 @@
     End Sub
 
     Public Overrides Function ToString() As String
-        Return X & "," & Y & "," & Direction.ToString
+        Return X & "," & Y & "," & Direction.ToString & " = " & Score
     End Function
 End Class

@@ -6,7 +6,8 @@ Public Class Form1
     Public Const MOUSEEVENTF_LEFTDOWN = &H2
     Public Const MOUSEEVENTF_LEFTUP = &H4
     Declare Function GetWindowRect Lib "user32.dll" Alias "GetWindowRect" (hwnd As IntPtr, ByRef rectangle As Rect) As IntPtr
-
+    Declare Function GetKeyState Lib "user32" Alias "GetKeyState" (ByVal ByValnVirtKey As Int32) As Int16
+    Private Const VK_CAPSLOCK = &H14
     Structure Rect
         Public Left As Int32
         Public Top As Int32
@@ -40,7 +41,9 @@ Public Class Form1
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
         Dim move = GetMove()
         If move IsNot Nothing Then
-            'PerformMoveUsingMouse(move)
+            If GetKeyState(VK_CAPSLOCK) = 1 Then
+                PerformMoveUsingMouse(move)
+            End If
         End If
     End Sub
 
@@ -89,10 +92,9 @@ Public Class Form1
             Next
         Next
 
-        'Me.Text = BejeweledBoard.GetUniqueTileCount
         If BejeweledBoard.IsValidBoard Then
             Dim move As BejeweledMove = BejeweledBoard.FindMove()
-            Me.Text = move.ToString
+            Me.Text = BejeweledBoard.GetUniqueTileCount & " unique tiles on VALID board - best move " & move.ToString
             Return move
         Else
             Me.Text = BejeweledBoard.GetScore & " - board not valid as it already contains matches"
@@ -107,7 +109,7 @@ Public Class Form1
         Cursor.Position = GetTopLeftOfBejeweledBoard()
         Cursor.Position = New Point(Cursor.Position.X + (TileSize * move.X), Cursor.Position.Y + (TileSize * move.Y))
         Thread.Sleep(200)
-        'Call apimouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
+        Call apimouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
         Select Case move.Direction
             Case ArrowDirection.Down
                 Cursor.Position = New Point(Cursor.Position.X, Cursor.Position.Y - TileSize)
@@ -121,7 +123,7 @@ Public Class Form1
         Thread.Sleep(200)
 
         Cursor.Position = oldPosition
-        'Call apimouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
+        Call apimouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
     End Sub
 
     Function GetTopLeftOfBejeweledBoard()

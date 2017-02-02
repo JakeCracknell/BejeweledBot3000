@@ -39,12 +39,13 @@ Public Class BejeweledBoard
         For x = 0 To tileCount - 1
             For y = 0 To tileCount - 1
                 For Each direction In [Enum].GetValues(GetType(ArrowDirection))
-                    possibleMoves.Add(New BejeweledMove(x, y, direction))
+                    Dim bejeweledMove As BejeweledMove = New BejeweledMove(x, y, direction)
+                    bejeweledMove.Score = GetScoreForMove(bejeweledMove)
+                    possibleMoves.Add(bejeweledMove)
                 Next
             Next
         Next
-        Console.WriteLine(String.Join(vbNewLine, possibleMoves.OrderByDescending(Function(m) GetScoreForMove(m))))
-        Return possibleMoves.OrderByDescending(Function(m) GetScoreForMove(m)).First
+        Return possibleMoves.OrderByDescending(Function(m) m.Score).First
     End Function
 
     Function IsValidBoard() As Boolean
@@ -97,7 +98,7 @@ Public Class BejeweledBoard
         Dim score As Integer = 0
         For x = 0 To tileCount - 1
             Dim currentMatchingCode As Integer = Nothing
-            Dim matches As Integer = 1
+            Dim matches As Integer = 0 'don't ask why this is fucking needed
             For y = 0 To tileCount - 1
                 If currentMatchingCode = squares(x, y) Then
                     matches += 1
@@ -110,7 +111,7 @@ Public Class BejeweledBoard
         Next
         For y = 0 To tileCount - 1
             Dim currentMatchingCode As Integer = Nothing
-            Dim matches As Integer = 1
+            Dim matches As Integer = 0
             For x = 0 To tileCount - 1
                 If currentMatchingCode = squares(x, y) Then
                     matches += 1
