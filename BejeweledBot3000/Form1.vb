@@ -40,7 +40,7 @@ Public Class Form1
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
         Dim move = GetMove()
         If move IsNot Nothing Then
-            PerformMoveUsingMouse(move)
+            'PerformMoveUsingMouse(move)
         End If
     End Sub
 
@@ -48,21 +48,33 @@ Public Class Form1
         Dim bFull As New Bitmap(TileCount * TileSize, TileCount * TileSize)
         Dim gFull As Graphics = Graphics.FromImage(bFull)
         gFull.CopyFromScreen(GetTopLeftOfBejeweledBoard, New Point(0, 0), bFull.Size)
-        'gFull.InterpolationMode = Drawing2D.InterpolationMode.NearestNeighbor
-        Dim bSmall As New Bitmap(TileCount, TileCount)
-        Dim gSmall As Graphics = Graphics.FromImage(bSmall)
-        gSmall.DrawImage(bFull, 0, 0, TileCount, TileCount)
-        bSmall = bSmall.Clone(New Rectangle(0, 0, bSmall.Width, bSmall.Height), PixelFormat.Format8bppIndexed)
+        bFull = bFull.Clone(New Rectangle(0, 0, bFull.Width, bFull.Height), PixelFormat.Format4bppIndexed)
+        bFull = bFull.Clone(New Rectangle(0, 0, bFull.Width, bFull.Height), PixelFormat.Format16bppRgb555)
 
-        PictureBox1.Image = bSmall
+        gFull = Graphics.FromImage(bFull)
+
 
         Dim BejeweledBoard As New BejeweledBoard(TileCount)
         For x = 0 To TileCount - 1
             For y = 0 To TileCount - 1
-                Dim tileCode = bSmall.GetPixel(x, y).ToArgb
+                Dim sampleRectangle = New Rectangle((TileSize * 0.4) + (x * TileSize), (TileSize * 0.4) + (y * TileSize),
+                                                    TileSize * (1 - 0.4 * 2), TileSize * (1 - 0.4 * 2))
+                Dim colors As New List(Of Integer)(sampleRectangle.Width * sampleRectangle.Height)
+                For i = sampleRectangle.Left To sampleRectangle.Right
+                    For j = sampleRectangle.Top To sampleRectangle.Bottom
+                        colors.Add(bFull.GetPixel(i, j).ToArgb)
+                    Next
+                Next
+                colors.Sort()
+                Dim tileCode = colors(colors.Count / 2)
+                gFull.DrawRectangle(New Pen(Color.White, 2), sampleRectangle)
+
                 BejeweledBoard.SetTile(x, y, tileCode)
             Next
         Next
+
+        PictureBox1.Image = bFull
+
         BejeweledBoard.Normalise()
         For x = 0 To TileCount - 1
             For y = 0 To TileCount - 1
@@ -80,6 +92,8 @@ Public Class Form1
             Return Nothing
         End If
     End Function
+
+
 
     Sub PerformMoveUsingMouse(move As BejeweledMove)
         Dim oldPosition = Cursor.Position
