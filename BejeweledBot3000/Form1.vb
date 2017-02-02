@@ -57,8 +57,9 @@ Public Class Form1
         Dim BejeweledBoard As New BejeweledBoard(TileCount)
         For x = 0 To TileCount - 1
             For y = 0 To TileCount - 1
-                Dim sampleRectangle = New Rectangle((TileSize * 0.4) + (x * TileSize), (TileSize * 0.4) + (y * TileSize),
-                                                    TileSize * (1 - 0.4 * 2), TileSize * (1 - 0.4 * 2))
+                Dim m As Double = 0.4
+                Dim sampleRectangle = New Rectangle((TileSize * m) + (x * TileSize), (TileSize * m) + (y * TileSize),
+                                                    TileSize * (1 - m * 2), TileSize * (1 - m * 2))
                 Dim colors As New List(Of Integer)(sampleRectangle.Width * sampleRectangle.Height)
                 For i = sampleRectangle.Left To sampleRectangle.Right
                     For j = sampleRectangle.Top To sampleRectangle.Bottom
@@ -82,13 +83,13 @@ Public Class Form1
             Next
         Next
 
-        Me.Text = BejeweledBoard.GetUniqueTileCount
+        'Me.Text = BejeweledBoard.GetUniqueTileCount
         If BejeweledBoard.IsValidBoard Then
             Dim move As BejeweledMove = BejeweledBoard.FindMove()
-            Button1.Text = move.ToString
+            Me.Text = move.ToString
             Return move
         Else
-            Button1.Text = BejeweledBoard.GetScore
+            Me.Text = BejeweledBoard.GetScore & " - board not valid as it already contains matches"
             Return Nothing
         End If
     End Function
