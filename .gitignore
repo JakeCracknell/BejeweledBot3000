@@ -1,0 +1,5 @@
+*.psess
+*.suo
+*.vsp
+*/bin/
+*/obj/
