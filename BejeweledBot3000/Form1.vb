@@ -48,7 +48,7 @@ Public Class Form1
         Dim bFull As New Bitmap(TileCount * TileSize, TileCount * TileSize)
         Dim gFull As Graphics = Graphics.FromImage(bFull)
         gFull.CopyFromScreen(GetTopLeftOfBejeweledBoard, New Point(0, 0), bFull.Size)
-        bFull = bFull.Clone(New Rectangle(0, 0, bFull.Width, bFull.Height), PixelFormat.Format4bppIndexed)
+        bFull = bFull.Clone(New Rectangle(0, 0, bFull.Width, bFull.Height), PixelFormat.Format8bppIndexed)
         bFull = bFull.Clone(New Rectangle(0, 0, bFull.Width, bFull.Height), PixelFormat.Format16bppRgb555)
 
         gFull = Graphics.FromImage(bFull)
@@ -57,7 +57,7 @@ Public Class Form1
         Dim BejeweledBoard As New BejeweledBoard(TileCount)
         For x = 0 To TileCount - 1
             For y = 0 To TileCount - 1
-                Dim m As Double = 0.4
+                Dim m As Double = 0.25
                 Dim sampleRectangle = New Rectangle((TileSize * m) + (x * TileSize), (TileSize * m) + (y * TileSize),
                                                     TileSize * (1 - m * 2), TileSize * (1 - m * 2))
                 Dim colors As New List(Of Integer)(sampleRectangle.Width * sampleRectangle.Height)
@@ -67,8 +67,9 @@ Public Class Form1
                     Next
                 Next
                 colors.Sort()
-                Dim tileCode = colors(colors.Count / 2)
-                gFull.DrawRectangle(New Pen(Color.White, 2), sampleRectangle)
+                Dim tileCode = colors.GroupBy(Function(n) n).OrderByDescending(Function(g) g.Count).
+                                Select(Function(g) g.Key).First
+                gFull.DrawRectangle(New Pen(Color.FromArgb(tileCode), 2), sampleRectangle)
 
                 BejeweledBoard.SetTile(x, y, tileCode)
             Next
@@ -76,6 +77,11 @@ Public Class Form1
 
         PictureBox1.Image = bFull
 
+        For x = 0 To TileCount - 1
+            For y = 0 To TileCount - 1
+                dgvBoard.Rows(y).Cells(x).Style.BackColor = Color.FromArgb(BejeweledBoard.GetTile(x, y))
+            Next
+        Next
         BejeweledBoard.Normalise()
         For x = 0 To TileCount - 1
             For y = 0 To TileCount - 1
