@@ -100,9 +100,7 @@ Public Class Form1
 
 
     Sub PerformMoveUsingMouse(move As BejeweledMove)
-        Cursor.Position = GetTopLeftOfBejeweledBoard()
         Cursor.Position = New Point(Cursor.Position.X + (TileSize * move.X), Cursor.Position.Y + (TileSize * move.Y))
-        'Thread.Sleep(200)
         Call apimouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
         Select Case move.Direction
             Case ArrowDirection.Down
@@ -114,7 +112,7 @@ Public Class Form1
             Case Else 'ArrowDirection.Right
                 Cursor.Position = New Point(Cursor.Position.X + TileSize, Cursor.Position.Y)
         End Select
-        'Thread.Sleep(200)
+        Thread.Sleep(20)
         Call apimouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
     End Sub
 
