@@ -60,7 +60,7 @@ Public Class Form1
         Dim BejeweledBoard As New BejeweledBoard(TileCount)
         For x = 0 To TileCount - 1
             For y = 0 To TileCount - 1
-                Dim m As Double = 0.25
+                Dim m As Double = 0.4
                 Dim sampleRectangle = New Rectangle((TileSize * m) + (x * TileSize), (TileSize * m) + (y * TileSize),
                                                     TileSize * (1 - m * 2), TileSize * (1 - m * 2))
                 Dim colorBucket As New ColorBucket()
@@ -100,10 +100,7 @@ Public Class Form1
         End If
     End Function
 
-
-
     Sub PerformMoveUsingMouse(move As BejeweledMove)
-        Dim oldPosition = Cursor.Position
         Cursor.Position = GetTopLeftOfBejeweledBoard()
         Cursor.Position = New Point(Cursor.Position.X + (TileSize * move.X), Cursor.Position.Y + (TileSize * move.Y))
         Thread.Sleep(200)
@@ -119,8 +116,6 @@ Public Class Form1
                 Cursor.Position = New Point(Cursor.Position.X + TileSize, Cursor.Position.Y)
         End Select
         Thread.Sleep(200)
-
-        Cursor.Position = oldPosition
         Call apimouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
     End Sub
 

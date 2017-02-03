@@ -19,17 +19,17 @@
 
     Public Function GetColorCode() As Integer
         Dim colorsByFrequency = Colors.GroupBy(Function(n) n).OrderByDescending(Function(g) g.Count).
-                                       Select(Function(g) g.Key).Where(Function(c) knownColors.Contains(c))
+                                       Select(Function(g) g.Key).Where(Function(c) knownColors.Contains(c)).ToList
 
         If colorsByFrequency.Count > 0 Then
-            If colorsByFrequency.First = White Then
+            If colorsByFrequency(0) = White Then
                 If colorsByFrequency.Count = 1 Then
                     Return White.ToArgb
                 Else
                     Return colorsByFrequency(1).ToArgb
                 End If
             Else
-                Return colorsByFrequency.First.ToArgb
+                Return colorsByFrequency(0).ToArgb
             End If
         Else
             Return Color.Black.ToArgb
