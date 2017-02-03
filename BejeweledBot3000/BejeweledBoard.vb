@@ -34,7 +34,7 @@ Public Class BejeweledBoard
         Return True
     End Function
 
-    Function FindMove() As BejeweledMove
+    Function FindMoves() As List(Of BejeweledMove)
         Dim possibleMoves As New List(Of BejeweledMove)
         For x = 0 To tileCount - 1
             For y = 0 To tileCount - 1
@@ -45,7 +45,7 @@ Public Class BejeweledBoard
                 Next
             Next
         Next
-        Return possibleMoves.OrderByDescending(Function(m) m.Score).First
+        Return possibleMoves.Where(Function(m) m.Score >= 3).ToList
     End Function
 
     Function IsValidBoard() As Boolean

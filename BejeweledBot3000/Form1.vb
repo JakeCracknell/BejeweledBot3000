@@ -32,22 +32,14 @@ Public Class Form1
         Thread.Sleep(200)
 
         Cursor.Position = GetTopLeftOfBejeweledBoard()
-        Dim move = GetMove()
-        If move IsNot Nothing Then
-            PerformMoveUsingMouse(move)
-        End If
+        GetMoves().ForEach(Sub(m) PerformMoveUsingMouse(m))
     End Sub
 
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
-        Dim move = GetMove()
-        If move IsNot Nothing Then
-            If GetKeyState(VK_CAPSLOCK) = 1 Then
-                PerformMoveUsingMouse(move)
-            End If
-        End If
+        GetMoves().ForEach(Sub(m) PerformMoveUsingMouseIfCapsLock(m))
     End Sub
 
-    Function GetMove() As BejeweledMove
+    Function GetMoves() As List(Of BejeweledMove)
         Dim bFull As New Bitmap(TileCount * TileSize, TileCount * TileSize)
         Dim gFull As Graphics = Graphics.FromImage(bFull)
         gFull.CopyFromScreen(GetTopLeftOfBejeweledBoard, New Point(0, 0), bFull.Size)
@@ -60,7 +52,7 @@ Public Class Form1
         Dim BejeweledBoard As New BejeweledBoard(TileCount)
         For x = 0 To TileCount - 1
             For y = 0 To TileCount - 1
-                Dim m As Double = 0.4
+                Dim m As Double = 0.25
                 Dim sampleRectangle = New Rectangle((TileSize * m) + (x * TileSize), (TileSize * m) + (y * TileSize),
                                                     TileSize * (1 - m * 2), TileSize * (1 - m * 2))
                 Dim colorBucket As New ColorBucket()
@@ -91,19 +83,26 @@ Public Class Form1
         Next
 
         If BejeweledBoard.IsValidBoard Then
-            Dim move As BejeweledMove = BejeweledBoard.FindMove()
-            Me.Text = BejeweledBoard.GetUniqueTileCount & " unique tiles on VALID board - best move " & move.ToString
-            Return move
+            Dim moves As List(Of BejeweledMove) = BejeweledBoard.FindMoves()
+            Me.Text = BejeweledBoard.GetUniqueTileCount & " unique tiles on VALID board - moves " & moves.Count
+            Return moves
         Else
             Me.Text = BejeweledBoard.GetScore & " - board not valid as it already contains matches"
-            Return Nothing
+            Return New List(Of BejeweledMove)
         End If
     End Function
+
+    Sub PerformMoveUsingMouseIfCapsLock(move As BejeweledMove)
+        If GetKeyState(VK_CAPSLOCK) = 1 Then
+            PerformMoveUsingMouse(move)
+        End If
+    End Sub
+
 
     Sub PerformMoveUsingMouse(move As BejeweledMove)
         Cursor.Position = GetTopLeftOfBejeweledBoard()
         Cursor.Position = New Point(Cursor.Position.X + (TileSize * move.X), Cursor.Position.Y + (TileSize * move.Y))
-        Thread.Sleep(200)
+        'Thread.Sleep(200)
         Call apimouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
         Select Case move.Direction
             Case ArrowDirection.Down
@@ -115,7 +114,7 @@ Public Class Form1
             Case Else 'ArrowDirection.Right
                 Cursor.Position = New Point(Cursor.Position.X + TileSize, Cursor.Position.Y)
         End Select
-        Thread.Sleep(200)
+        'Thread.Sleep(200)
         Call apimouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
     End Sub
 
