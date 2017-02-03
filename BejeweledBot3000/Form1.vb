@@ -72,13 +72,13 @@ Public Class Form1
 
         For x = 0 To TileCount - 1
             For y = 0 To TileCount - 1
-                dgvBoard.Rows(y).Cells(x).Style.BackColor = Color.FromArgb(BejeweledBoard.GetTile(x, y))
+                dgvBoard.Rows(y).Cells(x).Style.BackColor = Color.FromArgb(BejeweledBoard.GetTile(x, y).TileCode)
             Next
         Next
         BejeweledBoard.Normalise()
         For x = 0 To TileCount - 1
             For y = 0 To TileCount - 1
-                dgvBoard.Rows(y).Cells(x).Value = BejeweledBoard.GetTile(x, y)
+                dgvBoard.Rows(y).Cells(x).Value = BejeweledBoard.GetTile(x, y).tilecode
             Next
         Next
 
@@ -100,7 +100,8 @@ Public Class Form1
 
 
     Sub PerformMoveUsingMouse(move As BejeweledMove)
-        Cursor.Position = New Point(Cursor.Position.X + (TileSize * move.X), Cursor.Position.Y + (TileSize * move.Y))
+        Dim basePosition = GetTopLeftOfBejeweledBoard()
+        Cursor.Position = New Point(basePosition.X + (TileSize * move.X), basePosition.Y + (TileSize * move.Y))
         Call apimouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
         Select Case move.Direction
             Case ArrowDirection.Down
@@ -109,10 +110,10 @@ Public Class Form1
                 Cursor.Position = New Point(Cursor.Position.X, Cursor.Position.Y + TileSize)
             Case ArrowDirection.Left
                 Cursor.Position = New Point(Cursor.Position.X - TileSize, Cursor.Position.Y)
-            Case Else 'ArrowDirection.Right
+            Case ArrowDirection.Right
                 Cursor.Position = New Point(Cursor.Position.X + TileSize, Cursor.Position.Y)
         End Select
-        Thread.Sleep(20)
+        Thread.Sleep(200)
         Call apimouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
     End Sub
 

@@ -2,24 +2,24 @@
 
 Public Class BejeweledBoard
     Private ReadOnly tileCount As Integer
-    Private squares As Integer(,)
+    Private squares As BejeweledTile(,)
 
     Public Sub New(tileCount As Integer)
         Me.tileCount = tileCount
         ReDim squares(tileCount - 1, tileCount - 1)
     End Sub
 
-    Private Sub New(squares As Integer(,))
+    Private Sub New(squares As BejeweledTile(,))
         Me.New(squares.GetLength(0))
         Array.Copy(squares, Me.squares, squares.Length)
     End Sub
 
     Friend Sub SetTile(x As Integer, y As Integer, tileCode As Integer)
-        squares(x, y) = tileCode
+        squares(x, y) = New BejeweledTile(tileCode)
     End Sub
 
     Private Sub SwapTiles(x1 As Integer, y1 As Integer, x2 As Integer, y2 As Integer)
-        Dim tmp As Integer = squares(x1, y1)
+        Dim tmp As BejeweledTile = squares(x1, y1)
         squares(x1, y1) = squares(x2, y2)
         squares(x2, y2) = tmp
     End Sub
@@ -56,7 +56,7 @@ Public Class BejeweledBoard
         Dim codes As New HashSet(Of Integer)
         For x = 0 To tileCount - 1
             For y = 0 To tileCount - 1
-                codes.Add(squares(x, y))
+                codes.Add(squares(x, y).TileCode)
             Next
         Next
         Return codes.Count
@@ -67,17 +67,17 @@ Public Class BejeweledBoard
         Dim dic As New Dictionary(Of Integer, Integer)
         For x = 0 To tileCount - 1
             For y = 0 To tileCount - 1
-                Dim preNorm As Integer = squares(x, y)
+                Dim preNorm As Integer = squares(x, y).TileCode
                 If Not dic.ContainsKey(preNorm) Then
                     dic.Add(preNorm, nextNorm)
                     nextNorm += 1
                 End If
-                squares(x, y) = dic(preNorm)
+                squares(x, y).TileCode = dic(preNorm)
             Next
         Next
     End Sub
 
-    Friend Function GetTile(x As Integer, y As Integer) As Integer
+    Friend Function GetTile(x As Integer, y As Integer) As BejeweledTile
         Return squares(x, y)
     End Function
 
@@ -95,34 +95,39 @@ Public Class BejeweledBoard
     End Function
 
     Public Function GetScore() As Integer
-        Dim score As Integer = 0
+        Dim tilesToRemove As New HashSet(Of BejeweledTile)
         For x = 0 To tileCount - 1
             Dim currentMatchingCode As Integer = Nothing
-            Dim matches As Integer = 0 'don't ask why this is fucking needed
+            Dim tilesToRemoveFromThisLine = New HashSet(Of BejeweledTile)
             For y = 0 To tileCount - 1
-                If currentMatchingCode = squares(x, y) Then
-                    matches += 1
-                Else
-                    currentMatchingCode = squares(x, y)
-                    matches = 1
+                If currentMatchingCode <> squares(x, y).TileCode Then
+                    tilesToRemoveFromThisLine.Clear()
+                    currentMatchingCode = squares(x, y).TileCode
                 End If
-                score = Math.Max(matches, score)
+                tilesToRemoveFromThisLine.Add(squares(x, y))
+                If tilesToRemoveFromThisLine.Count >= 3 Then
+                    tilesToRemove.UnionWith(tilesToRemoveFromThisLine)
+                End If
             Next
         Next
         For y = 0 To tileCount - 1
             Dim currentMatchingCode As Integer = Nothing
-            Dim matches As Integer = 0
+            Dim tilesToRemoveFromThisLine = New HashSet(Of BejeweledTile)
             For x = 0 To tileCount - 1
-                If currentMatchingCode = squares(x, y) Then
-                    matches += 1
-                Else
-                    currentMatchingCode = squares(x, y)
-                    matches = 1
+                If tilesToRemoveFromThisLine.Count >= 3 Then
+                    tilesToRemove.UnionWith(tilesToRemoveFromThisLine)
                 End If
-                score = Math.Max(matches, score)
+                If currentMatchingCode <> squares(x, y).TileCode Then
+                    tilesToRemoveFromThisLine.Clear()
+                    currentMatchingCode = squares(x, y).TileCode
+                End If
+                tilesToRemoveFromThisLine.Add(squares(x, y))
+                If tilesToRemoveFromThisLine.Count >= 3 Then
+                    tilesToRemove.UnionWith(tilesToRemoveFromThisLine)
+                End If
             Next
         Next
-        Return score
+        Return tilesToRemove.Count
     End Function
 
     Private Function PerformMoveAndGetValidity(move As BejeweledMove) As Integer
