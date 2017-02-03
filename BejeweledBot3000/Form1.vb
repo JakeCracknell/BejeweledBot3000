@@ -63,15 +63,13 @@ Public Class Form1
                 Dim m As Double = 0.25
                 Dim sampleRectangle = New Rectangle((TileSize * m) + (x * TileSize), (TileSize * m) + (y * TileSize),
                                                     TileSize * (1 - m * 2), TileSize * (1 - m * 2))
-                Dim colors As New List(Of Integer)(sampleRectangle.Width * sampleRectangle.Height)
+                Dim colorBucket As New ColorBucket()
                 For i = sampleRectangle.Left To sampleRectangle.Right
                     For j = sampleRectangle.Top To sampleRectangle.Bottom
-                        colors.Add(bFull.GetPixel(i, j).ToArgb)
+                        colorBucket.Colors.Add(bFull.GetPixel(i, j))
                     Next
                 Next
-                colors.Sort()
-                Dim tileCode = colors.GroupBy(Function(n) n).OrderByDescending(Function(g) g.Count).
-                                Select(Function(g) g.Key).First
+                Dim tileCode = colorBucket.GetColorCode
                 gFull.DrawRectangle(New Pen(Color.FromArgb(tileCode), 2), sampleRectangle)
 
                 BejeweledBoard.SetTile(x, y, tileCode)
