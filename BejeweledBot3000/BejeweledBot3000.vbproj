@@ -74,6 +74,7 @@
   <ItemGroup>
     <Compile Include="BejeweledBoard.vb" />
     <Compile Include="BejeweledMove.vb" />
+    <Compile Include="BejeweledScreenReader.vb" />
     <Compile Include="BejeweledTile.vb" />
     <Compile Include="ColorBucket.vb" />
     <Compile Include="Form1.vb">
