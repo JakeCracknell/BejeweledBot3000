@@ -26,8 +26,9 @@ Public Class Form1
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
         Dim bejeweledLocation As Rect = BejeweledScreenReader.GetBejeweledWindowRect()
         Me.Location = New Point(bejeweledLocation.Right, bejeweledLocation.Top)
-        If BejeweledBoardIsStatic() Then
-            PerformMovesUsingMouseIfCapsLock(GetMoves())
+        Dim moves = GetMoves()
+        If cbWaitForStaticBoard.Checked AndAlso BejeweledBoardIsStatic() Then
+            PerformMovesUsingMouseIfCapsLock(moves)
             TryClickOnPlayAgainButtonIfCapsLock()
         Else
             LOG("Waiting for static board")

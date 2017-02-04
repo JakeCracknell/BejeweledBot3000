@@ -28,6 +28,7 @@ Partial Class Form1
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.dgvBoard = New System.Windows.Forms.DataGridView()
         Me.lblStatus = New System.Windows.Forms.Label()
+        Me.cbWaitForStaticBoard = New System.Windows.Forms.CheckBox()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dgvBoard, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -77,11 +78,22 @@ Partial Class Form1
         Me.lblStatus.TabIndex = 3
         Me.lblStatus.Text = "NOT RUNNING"
         '
+        'cbWaitForStaticBoard
+        '
+        Me.cbWaitForStaticBoard.AutoSize = True
+        Me.cbWaitForStaticBoard.Location = New System.Drawing.Point(13, 261)
+        Me.cbWaitForStaticBoard.Name = "cbWaitForStaticBoard"
+        Me.cbWaitForStaticBoard.Size = New System.Drawing.Size(172, 17)
+        Me.cbWaitForStaticBoard.TabIndex = 4
+        Me.cbWaitForStaticBoard.Text = "Pause and wait for static board"
+        Me.cbWaitForStaticBoard.UseVisualStyleBackColor = True
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(462, 265)
+        Me.ClientSize = New System.Drawing.Size(462, 290)
+        Me.Controls.Add(Me.cbWaitForStaticBoard)
         Me.Controls.Add(Me.lblStatus)
         Me.Controls.Add(Me.dgvBoard)
         Me.Controls.Add(Me.PictureBox1)
@@ -100,4 +112,5 @@ Partial Class Form1
     Friend WithEvents PictureBox1 As PictureBox
     Friend WithEvents dgvBoard As DataGridView
     Friend WithEvents lblStatus As Label
+    Friend WithEvents cbWaitForStaticBoard As CheckBox
 End Class
