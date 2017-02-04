@@ -40,12 +40,25 @@ Public Class BejeweledBoard
             For y = 0 To tileCount - 1
                 For Each direction In [Enum].GetValues(GetType(ArrowDirection))
                     Dim bejeweledMove As BejeweledMove = New BejeweledMove(x, y, direction)
-                    bejeweledMove.Score = GetScoreForMove(bejeweledMove)
+                    bejeweledMove.TilesToRemoveAsResult = GetClonedBoardWithMoveApplied(bejeweledMove).GetTilesToRemove
                     possibleMoves.Add(bejeweledMove)
                 Next
             Next
         Next
-        Return possibleMoves.Where(Function(m) m.Score >= 3).ToList
+        Dim goodMoves = possibleMoves.Where(Function(m) m.Score >= 3).OrderByDescending(Function(m) m.Score).ToList
+        Dim workingBoard As New BejeweledBoard(squares)
+        Dim tilesThatWillBeRemoved As HashSet(Of BejeweledTile) = workingBoard.GetTilesToRemove
+        Dim movesToApply As New List(Of BejeweledMove)
+        For Each move In goodMoves
+            Dim boardWithCurrentMovedApplied = workingBoard.GetClonedBoardWithMoveApplied(move)
+            Dim tilesToRemoveWithCurrentMovedApplied = boardWithCurrentMovedApplied.GetTilesToRemove
+            If tilesToRemoveWithCurrentMovedApplied.Count > tilesThatWillBeRemoved.Count Then
+                workingBoard = boardWithCurrentMovedApplied
+                tilesThatWillBeRemoved = tilesToRemoveWithCurrentMovedApplied
+                movesToApply.Add(move)
+            End If
+        Next
+        Return movesToApply
     End Function
 
     Function IsValidBoard() As Boolean
@@ -81,20 +94,19 @@ Public Class BejeweledBoard
         Return squares(x, y)
     End Function
 
-    Private Function GetScoreForMove(move As BejeweledMove) As Object
-        Dim cloneBoard As New BejeweledBoard(squares)
-        Return cloneBoard.PerformMoveAndGetScore(move)
-    End Function
-
-    Private Function PerformMoveAndGetScore(move As BejeweledMove) As Integer
-        If PerformMoveAndGetValidity(move) Then
-            Return GetScore()
-        Else
-            Return -1
-        End If
+    Private Function GetClonedBoardWithMoveApplied(move As BejeweledMove) As BejeweledBoard
+        Dim board As New BejeweledBoard(squares)
+        board.PerformMoveIfValid(move)
+        Return board
     End Function
 
     Public Function GetScore() As Integer
+
+        Return GetTilesToRemove().Count
+    End Function
+
+
+    Public Function GetTilesToRemove() As HashSet(Of BejeweledTile)
         Dim tilesToRemove As New HashSet(Of BejeweledTile)
         For x = 0 To tileCount - 1
             Dim currentMatchingCode As Integer = Nothing
@@ -127,10 +139,10 @@ Public Class BejeweledBoard
                 End If
             Next
         Next
-        Return tilesToRemove.Count
+        Return tilesToRemove
     End Function
 
-    Private Function PerformMoveAndGetValidity(move As BejeweledMove) As Integer
+    Private Function PerformMoveIfValid(move As BejeweledMove) As Boolean
         Select Case move.Direction
             Case ArrowDirection.Down
                 Return TrySwapTiles(move.X, move.Y, move.X, move.Y - 1)

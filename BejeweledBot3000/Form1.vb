@@ -31,11 +31,12 @@ Public Class Form1
         Console.Beep()
         Thread.Sleep(200)
 
-        Cursor.Position = GetTopLeftOfBejeweledBoard()
         GetMoves().ForEach(Sub(m) PerformMoveUsingMouse(m))
     End Sub
 
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
+        Dim bejeweledLocation As Rect = GetBejeweledWindowRect()
+        Me.Location = New Point(bejeweledLocation.Right, bejeweledLocation.Top)
         GetMoves().ForEach(Sub(m) PerformMoveUsingMouseIfCapsLock(m))
     End Sub
 
@@ -78,7 +79,7 @@ Public Class Form1
         BejeweledBoard.Normalise()
         For x = 0 To TileCount - 1
             For y = 0 To TileCount - 1
-                dgvBoard.Rows(y).Cells(x).Value = BejeweledBoard.GetTile(x, y).tilecode
+                dgvBoard.Rows(y).Cells(x).Value = BejeweledBoard.GetTile(x, y).TileCode
             Next
         Next
 
@@ -113,15 +114,20 @@ Public Class Form1
             Case ArrowDirection.Right
                 Cursor.Position = New Point(Cursor.Position.X + TileSize, Cursor.Position.Y)
         End Select
-        Thread.Sleep(200)
+        Thread.Sleep(10)
         Call apimouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
     End Sub
 
     Function GetTopLeftOfBejeweledBoard()
+        Dim b As Rect = GetBejeweledWindowRect()
+        Return New Point(b.Left + 7 + 4.15 * TileSize, b.Top + 25 + 0.65 * TileSize)
+    End Function
+
+    Function GetBejeweledWindowRect() As Rect
         Dim handle As IntPtr = Process.GetProcessesByName("Bejeweled3")(0).MainWindowHandle
         Dim rect As New Rect
         GetWindowRect(handle, rect)
-        Return New Point(rect.Left + 7 + 4.15 * TileSize, rect.Top + 25 + 0.65 * TileSize)
+        Return rect
     End Function
 
 
