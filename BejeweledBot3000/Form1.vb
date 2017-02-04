@@ -85,14 +85,11 @@ Public Class Form1
             Next
         Next
 
-        If BejeweledBoard.IsValidBoard Then
-            Dim moves As List(Of BejeweledMove) = BejeweledBoard.FindMoves()
-            Me.Text = BejeweledBoard.GetUniqueTileCount & " unique tiles on VALID board - moves " & moves.Count
-            Return moves
-        Else
-            Me.Text = BejeweledBoard.GetScore & " - board not valid as it already contains matches"
-            Return New List(Of BejeweledMove)
-        End If
+        Dim moves As List(Of BejeweledMove) = BejeweledBoard.FindMoves()
+        Me.Text = BejeweledBoard.GetUniqueTileCount & " unique tiles - moves " & moves.Count &
+                         IIf(BejeweledBoard.IsValidBoard, "", " - Board looks invalid")
+        Return moves
+
     End Function
 
     Sub PerformMoveUsingMouseIfCapsLock(move As BejeweledMove)
