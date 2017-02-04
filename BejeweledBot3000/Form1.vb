@@ -37,11 +37,12 @@ Public Class Form1
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
         Dim bejeweledLocation As Rect = GetBejeweledWindowRect()
         Me.Location = New Point(bejeweledLocation.Right, bejeweledLocation.Top)
-        GetMoves().ForEach(Sub(m) PerformMoveUsingMouseIfCapsLock(m))
+        PerformMovesUsingMouseIfCapsLock(GetMoves())
         TryClickOnPlayAgainButtonIfCapsLock()
     End Sub
 
     Function DrawAndGetBejeweledBoardFromScreen() As BejeweledBoard
+        LOG("Reading from screen")
         Dim bFull As New Bitmap(TileCount * TileSize, TileCount * TileSize)
         Dim gFull As Graphics = Graphics.FromImage(bFull)
         gFull.CopyFromScreen(GetTopLeftOfBejeweledBoard, New Point(0, 0), bFull.Size)
@@ -82,7 +83,8 @@ Public Class Form1
     Function GetMoves() As List(Of BejeweledMove)
         Dim BejeweledBoard As BejeweledBoard = DrawAndGetBejeweledBoardFromScreen()
         If (OscillationDetector.LogBoardAndReturnTrueIfOscillationDetected(BejeweledBoard)) Then
-            Console.Beep(500, 500) 'Wait half a second for board to calm down.
+            LOG("Oscillation detected - sleeping")
+            Thread.Sleep(500) 'Wait half a second for board to calm down.
             Return New List(Of BejeweledMove)
         Else
             Dim moves As List(Of BejeweledMove) = BejeweledBoard.FindMoves()
@@ -92,9 +94,12 @@ Public Class Form1
         End If
     End Function
 
-    Sub PerformMoveUsingMouseIfCapsLock(move As BejeweledMove)
+    Sub PerformMovesUsingMouseIfCapsLock(bejeweledMoves As List(Of BejeweledMove))
         If GetKeyState(VK_CAPSLOCK) = 1 Then
-            PerformMoveUsingMouse(move)
+            LOG("Performing " & bejeweledMoves.Count & " moves")
+            For Each bejeweledMove In bejeweledMoves
+                PerformMoveUsingMouse(bejeweledMove)
+            Next
         End If
     End Sub
 
@@ -144,5 +149,8 @@ Public Class Form1
         Return rect
     End Function
 
-
+    Sub LOG(str As String)
+        lblStatus.Text = str.ToUpper
+        Thread.Yield()
+    End Sub
 End Class

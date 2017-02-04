@@ -27,6 +27,7 @@ Partial Class Form1
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.dgvBoard = New System.Windows.Forms.DataGridView()
+        Me.lblStatus = New System.Windows.Forms.Label()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.dgvBoard, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -35,9 +36,9 @@ Partial Class Form1
         '
         Me.Button1.Location = New System.Drawing.Point(13, 13)
         Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(75, 23)
+        Me.Button1.Size = New System.Drawing.Size(103, 23)
         Me.Button1.TabIndex = 0
-        Me.Button1.Text = "Button1"
+        Me.Button1.Text = "Action One Move"
         Me.Button1.UseVisualStyleBackColor = True
         '
         'Timer1
@@ -66,11 +67,22 @@ Partial Class Form1
         Me.dgvBoard.Size = New System.Drawing.Size(200, 200)
         Me.dgvBoard.TabIndex = 2
         '
+        'lblStatus
+        '
+        Me.lblStatus.AutoSize = True
+        Me.lblStatus.Font = New System.Drawing.Font("Microsoft Sans Serif", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblStatus.Location = New System.Drawing.Point(122, 12)
+        Me.lblStatus.Name = "lblStatus"
+        Me.lblStatus.Size = New System.Drawing.Size(142, 24)
+        Me.lblStatus.TabIndex = 3
+        Me.lblStatus.Text = "NOT RUNNING"
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(462, 265)
+        Me.Controls.Add(Me.lblStatus)
         Me.Controls.Add(Me.dgvBoard)
         Me.Controls.Add(Me.PictureBox1)
         Me.Controls.Add(Me.Button1)
@@ -79,6 +91,7 @@ Partial Class Form1
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.dgvBoard, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
+        Me.PerformLayout()
 
     End Sub
 
@@ -86,4 +99,5 @@ Partial Class Form1
     Friend WithEvents Timer1 As Timer
     Friend WithEvents PictureBox1 As PictureBox
     Friend WithEvents dgvBoard As DataGridView
+    Friend WithEvents lblStatus As Label
 End Class
