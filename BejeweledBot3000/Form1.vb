@@ -38,7 +38,9 @@ Public Class Form1
         Dim bejeweledLocation As Rect = GetBejeweledWindowRect()
         Me.Location = New Point(bejeweledLocation.Right, bejeweledLocation.Top)
         GetMoves().ForEach(Sub(m) PerformMoveUsingMouseIfCapsLock(m))
+        TryClickOnPlayAgainButtonIfCapsLock()
     End Sub
+
 
     Function GetMoves() As List(Of BejeweledMove)
         Dim bFull As New Bitmap(TileCount * TileSize, TileCount * TileSize)
@@ -114,8 +116,23 @@ Public Class Form1
             Case ArrowDirection.Right
                 Cursor.Position = New Point(Cursor.Position.X + TileSize, Cursor.Position.Y)
         End Select
-        Thread.Sleep(10)
+        Thread.Sleep(25)
         Call apimouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
+    End Sub
+
+    Private Sub TryClickOnPlayAgainButtonIfCapsLock()
+        If GetKeyState(VK_CAPSLOCK) = 1 Then
+            TryClickOnPlayAgainButton()
+        End If
+    End Sub
+
+    Private Sub TryClickOnPlayAgainButton()
+        Dim oldPosition = Cursor.Position
+        Dim b As Rect = GetBejeweledWindowRect()
+        Cursor.Position = New Point(b.Left + (b.Right - b.Left) / 2, b.Top + 440)
+        Call apimouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
+        Call apimouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
+        Cursor.Position = oldPosition
     End Sub
 
     Function GetTopLeftOfBejeweledBoard()
