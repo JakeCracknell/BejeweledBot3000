@@ -16,7 +16,7 @@ Public Class Form1
     End Structure
 
     Dim TileSize As Integer = 50
-    Dim TileCount As Integer = 8
+    Dim OscillationDetector As New OscillationDetector
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles Me.Load
         dgvBoard.RowCount = TileCount
@@ -41,16 +41,13 @@ Public Class Form1
         TryClickOnPlayAgainButtonIfCapsLock()
     End Sub
 
-
-    Function GetMoves() As List(Of BejeweledMove)
+    Function DrawAndGetBejeweledBoardFromScreen() As BejeweledBoard
         Dim bFull As New Bitmap(TileCount * TileSize, TileCount * TileSize)
         Dim gFull As Graphics = Graphics.FromImage(bFull)
         gFull.CopyFromScreen(GetTopLeftOfBejeweledBoard, New Point(0, 0), bFull.Size)
         bFull = bFull.Clone(New Rectangle(0, 0, bFull.Width, bFull.Height), PixelFormat.Format8bppIndexed)
         bFull = bFull.Clone(New Rectangle(0, 0, bFull.Width, bFull.Height), PixelFormat.Format16bppRgb555)
-
         gFull = Graphics.FromImage(bFull)
-
 
         Dim BejeweledBoard As New BejeweledBoard(TileCount)
         For x = 0 To TileCount - 1
@@ -70,26 +67,29 @@ Public Class Form1
                 BejeweledBoard.SetTile(x, y, tileCode)
             Next
         Next
-
-        PictureBox1.Image = bFull
-
-        For x = 0 To TileCount - 1
-            For y = 0 To TileCount - 1
-                dgvBoard.Rows(y).Cells(x).Style.BackColor = Color.FromArgb(BejeweledBoard.GetTile(x, y).TileCode)
-            Next
-        Next
         BejeweledBoard.Normalise()
+        PictureBox1.Image = bFull
         For x = 0 To TileCount - 1
             For y = 0 To TileCount - 1
-                dgvBoard.Rows(y).Cells(x).Value = BejeweledBoard.GetTile(x, y).TileCode
+                Dim bejeweledTile As BejeweledTile = BejeweledBoard.GetTile(x, y)
+                dgvBoard.Rows(y).Cells(x).Style.BackColor = Color.FromArgb(bejeweledTile.TileCode)
+                dgvBoard.Rows(y).Cells(x).Value = bejeweledTile.NormalisedTileCode
             Next
         Next
+        Return BejeweledBoard
+    End Function
 
-        Dim moves As List(Of BejeweledMove) = BejeweledBoard.FindMoves()
-        Me.Text = BejeweledBoard.GetUniqueTileCount & " unique tiles - moves " & moves.Count &
-                         IIf(BejeweledBoard.IsValidBoard, "", " - Board looks invalid")
-        Return moves
-
+    Function GetMoves() As List(Of BejeweledMove)
+        Dim BejeweledBoard As BejeweledBoard = DrawAndGetBejeweledBoardFromScreen()
+        If (OscillationDetector.LogBoardAndReturnTrueIfOscillationDetected(BejeweledBoard)) Then
+            Console.Beep(500, 500) 'Wait half a second for board to calm down.
+            Return New List(Of BejeweledMove)
+        Else
+            Dim moves As List(Of BejeweledMove) = BejeweledBoard.FindMoves()
+            Me.Text = BejeweledBoard.GetUniqueTileCount & " unique tiles - moves " & moves.Count &
+                             IIf(BejeweledBoard.IsValidBoard, "", " - Board looks invalid")
+            Return moves
+        End If
     End Function
 
     Sub PerformMoveUsingMouseIfCapsLock(move As BejeweledMove)

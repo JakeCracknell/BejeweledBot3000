@@ -85,7 +85,7 @@ Public Class BejeweledBoard
                     dic.Add(preNorm, nextNorm)
                     nextNorm += 1
                 End If
-                squares(x, y).TileCode = dic(preNorm)
+                squares(x, y).NormalisedTileCode = dic(preNorm)
             Next
         Next
     End Sub
