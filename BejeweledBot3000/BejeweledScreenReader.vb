@@ -4,10 +4,10 @@ Public Class BejeweledScreenReader
     Public LatestBitmap As New Bitmap(1, 1)
 
     Function DrawAndGetBejeweledBoardFromScreen() As BejeweledBoard
-        Return DrawAndGetBejeweledBoardFromScreen(0.25)
+        Return DrawAndGetBejeweledBoardFromScreen(0.25, False)
     End Function
 
-    Function DrawAndGetBejeweledBoardFromScreen(m As Double) As BejeweledBoard
+    Function DrawAndGetBejeweledBoardFromScreen(m As Double, useMode As Boolean) As BejeweledBoard
         Dim bFull As New Bitmap(TileCount * TileSize, TileCount * TileSize)
         Dim gFull As Graphics = Graphics.FromImage(bFull)
         gFull.CopyFromScreen(GetTopLeftOfBejeweledBoard, New Point(0, 0), bFull.Size)
@@ -27,9 +27,13 @@ Public Class BejeweledScreenReader
                         colorBucket.Colors.Add(bFull.GetPixel(i, j))
                     Next
                 Next
-                Dim tileCode = colorBucket.GetColorCode
+                Dim tileCode
+                If useMode Then
+                    tileCode = colorBucket.GetColorCode_MODE
+                Else
+                    tileCode = colorBucket.GetColorCode()
+                End If
                 gFull.DrawRectangle(New Pen(Color.FromArgb(tileCode), 2), sampleRectangle)
-
                 BejeweledBoard.SetTile(x, y, tileCode)
             Next
         Next
@@ -37,8 +41,8 @@ Public Class BejeweledScreenReader
         Return BejeweledBoard
     End Function
 
-    Function DrawAndGetBejeweledBoardVeryQuick() As BejeweledBoard
-        Return DrawAndGetBejeweledBoardFromScreen(0.49)
+    Function DrawAndGetBejeweledBoardFromScreen_VeryQuick() As BejeweledBoard
+        Return DrawAndGetBejeweledBoardFromScreen(0.49, True)
     End Function
 
     Function GetTopLeftOfBejeweledBoard()
