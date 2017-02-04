@@ -26,9 +26,20 @@ Public Class Form1
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
         Dim bejeweledLocation As Rect = BejeweledScreenReader.GetBejeweledWindowRect()
         Me.Location = New Point(bejeweledLocation.Right, bejeweledLocation.Top)
-        PerformMovesUsingMouseIfCapsLock(GetMoves())
-        TryClickOnPlayAgainButtonIfCapsLock()
+        If BejeweledBoardIsStatic() Then
+            PerformMovesUsingMouseIfCapsLock(GetMoves())
+            TryClickOnPlayAgainButtonIfCapsLock()
+        Else
+            LOG("Waiting for static board")
+        End If
+
     End Sub
+
+    Private Function BejeweledBoardIsStatic() As Boolean
+        Dim bejeweledBoard1 As BejeweledBoard = BejeweledScreenReader.DrawAndGetBejeweledBoardFromScreen_VeryQuick()
+        Dim bejeweledBoard2 As BejeweledBoard = BejeweledScreenReader.DrawAndGetBejeweledBoardFromScreen_VeryQuick()
+        Return OscillationDetector.GetDifference(bejeweledBoard1, bejeweledBoard2) <= 3
+    End Function
 
     Function GetMoves() As List(Of BejeweledMove)
         LOG("Reading from screen")
