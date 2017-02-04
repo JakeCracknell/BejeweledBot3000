@@ -27,7 +27,7 @@ Public Class Form1
         Dim bejeweledLocation As Rect = BejeweledScreenReader.GetBejeweledWindowRect()
         Me.Location = New Point(bejeweledLocation.Right, bejeweledLocation.Top)
         Dim moves = GetMoves()
-        If cbWaitForStaticBoard.Checked AndAlso BejeweledBoardIsStatic() Then
+        If Not cbWaitForStaticBoard.Checked OrElse BejeweledBoardIsStatic() Then
             PerformMovesUsingMouseIfCapsLock(moves)
             TryClickOnPlayAgainButtonIfCapsLock()
         Else

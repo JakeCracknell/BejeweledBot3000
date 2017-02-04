@@ -55,6 +55,8 @@ Public Class BejeweledBoard
             If tilesToRemoveWithCurrentMovedApplied.Count > tilesThatWillBeRemoved.Count Then
                 workingBoard = boardWithCurrentMovedApplied
                 tilesThatWillBeRemoved = tilesToRemoveWithCurrentMovedApplied
+                Dim randomTileCode As Integer = Rnd() * 100000000
+                tilesThatWillBeRemoved.ToList.ForEach(Sub(t) t.TileCode = randomTileCode)
                 movesToApply.Add(move)
             End If
         Next
