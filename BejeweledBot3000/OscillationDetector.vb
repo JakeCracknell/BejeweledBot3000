@@ -1,7 +1,7 @@
 ﻿Imports BejeweledBot3000
 
 Public Class OscillationDetector
-    Private moveListHashcodes(6) As Integer
+    Private moveListHashcodes(10) As Integer
     Private nextInsertionIndex As Byte = 0
 
     Function LogMovesAndReturnTrueIfOscillationDetected(moves As List(Of BejeweledMove))

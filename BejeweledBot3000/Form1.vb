@@ -117,7 +117,7 @@ Public Class Form1
             Case ArrowDirection.Right
                 Cursor.Position = New Point(Cursor.Position.X + TileSize, Cursor.Position.Y)
         End Select
-        Thread.Sleep(25)
+        Thread.Sleep(5)
         Call apimouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
     End Sub
 
