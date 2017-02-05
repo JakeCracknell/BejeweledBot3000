@@ -10,7 +10,7 @@ Public Class BejeweledScreenReader
     Function DrawAndGetBejeweledBoardFromScreen(m As Double, useMode As Boolean) As BejeweledBoard
         Dim bFull As New Bitmap(TileCount * TileSize, TileCount * TileSize)
         Dim gFull As Graphics = Graphics.FromImage(bFull)
-        gFull.CopyFromScreen(GetTopLeftOfBejeweledBoard, New Point(0, 0), bFull.Size)
+        gFull.CopyFromScreen(GetTopLeftOfBejeweledBoard_DiamondMine, New Point(0, 0), bFull.Size)
         bFull = bFull.Clone(New Rectangle(0, 0, bFull.Width, bFull.Height), PixelFormat.Format8bppIndexed)
         bFull = bFull.Clone(New Rectangle(0, 0, bFull.Width, bFull.Height), PixelFormat.Format16bppRgb555)
         gFull = Graphics.FromImage(bFull)
@@ -45,7 +45,12 @@ Public Class BejeweledScreenReader
         Return DrawAndGetBejeweledBoardFromScreen(0.49, True)
     End Function
 
-    Function GetTopLeftOfBejeweledBoard()
+    Function GetTopLeftOfBejeweledBoard_DiamondMine()
+        Dim b As Rect = GetBejeweledWindowRect()
+        Return New Point(b.Left + 7 + 3.9 * TileSize, b.Top + 25 + 1.1 * TileSize)
+    End Function
+
+    Function GetTopLeftOfBejeweledBoard_Classic()
         Dim b As Rect = GetBejeweledWindowRect()
         Return New Point(b.Left + 7 + 4.15 * TileSize, b.Top + 25 + 0.65 * TileSize)
     End Function

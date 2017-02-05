@@ -1,13 +1,16 @@
 ﻿Public Class ColorBucket
     Public Colors As New List(Of Color)
-    Private White As Color = Color.FromArgb(255, 255, 255)
-    Private knownColors As New HashSet(Of Color) From {
+    Private Shared White As Color = Color.FromArgb(255, 255, 255)
+    Private Shared DirtBrown As Color = Color.FromArgb(255, 255, 255)
+
+    Private Shared knownColors As New HashSet(Of Color) From {
         Color.FromArgb(255, 0, 49),
         Color.FromArgb(255, 0, 255),
         Color.FromArgb(0, 156, 255),
         Color.FromArgb(255, 255, 49),
         Color.FromArgb(255, 99, 0),
         Color.FromArgb(49, 255, 99),
+        DirtBrown,
         White
     }
 
@@ -35,5 +38,10 @@
             Return Color.Black.ToArgb
         End If
     End Function
+
+    Public Shared Function IsKnownColor(TileCode As Integer) As Boolean
+        Return knownColors.Contains(Color.FromArgb(TileCode))
+    End Function
+
 
 End Class

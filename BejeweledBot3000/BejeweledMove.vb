@@ -17,4 +17,8 @@
     Public Overrides Function ToString() As String
         Return X & "," & Y & "," & Direction.ToString & " = " & Score
     End Function
+
+    Public Overrides Function GetHashCode() As Integer
+        Return 31 * X + 17 * Y
+    End Function
 End Class

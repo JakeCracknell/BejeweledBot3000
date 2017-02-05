@@ -1,21 +1,20 @@
 ﻿Imports BejeweledBot3000
 
 Public Class OscillationDetector
-    Private boards(2) As BejeweledBoard
+    Private moveListHashcodes(6) As Integer
     Private nextInsertionIndex As Byte = 0
 
-    Function LogBoardAndReturnTrueIfOscillationDetected(bejeweledBoard As BejeweledBoard)
-        Dim board2Ago As BejeweledBoard = boards(nextInsertionIndex)
-        boards(nextInsertionIndex) = bejeweledBoard
-        nextInsertionIndex = (nextInsertionIndex + 1) Mod 2
-        Dim board1Ago As BejeweledBoard = boards(nextInsertionIndex)
-
-        Dim differencesTo1Ago As Integer = GetDifference(bejeweledBoard, board1Ago)
-        Dim differencesTo2Ago As Integer = GetDifference(bejeweledBoard, board2Ago)
-        Return differencesTo1Ago > 0 And differencesTo2Ago < 3
+    Function LogMovesAndReturnTrueIfOscillationDetected(moves As List(Of BejeweledMove))
+        Dim hashcode As Integer = moves.Select(Function(m) m.GetHashCode).Sum
+        Try
+            Return hashcode <> 0 AndAlso moveListHashcodes.Where(Function(h) h = hashcode).Count > 2
+        Finally
+            moveListHashcodes(nextInsertionIndex) = hashcode
+            nextInsertionIndex = (nextInsertionIndex + 1) Mod moveListHashcodes.Length
+        End Try
     End Function
 
-    Friend Shared Function GetDifference(bejeweledBoard1 As BejeweledBoard, bejeweledBoard2 As BejeweledBoard) As Integer
+    Friend Shared Function GetDifferenceInBoards(bejeweledBoard1 As BejeweledBoard, bejeweledBoard2 As BejeweledBoard) As Integer
         Dim differences As Integer = 0
         If bejeweledBoard1 IsNot Nothing And bejeweledBoard2 IsNot Nothing Then
             For x = 0 To TileCount - 1

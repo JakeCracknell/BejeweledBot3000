@@ -35,16 +35,7 @@ Public Class BejeweledBoard
     End Function
 
     Function FindMoves() As List(Of BejeweledMove)
-        Dim possibleMoves As New List(Of BejeweledMove)
-        For x = 0 To tileCount - 1
-            For y = 0 To tileCount - 1
-                For Each direction In [Enum].GetValues(GetType(ArrowDirection))
-                    Dim bejeweledMove As BejeweledMove = New BejeweledMove(x, y, direction)
-                    bejeweledMove.TilesToRemoveAsResult = GetClonedBoardWithMoveApplied(bejeweledMove).GetTilesToRemove
-                    possibleMoves.Add(bejeweledMove)
-                Next
-            Next
-        Next
+        Dim possibleMoves As List(Of BejeweledMove) = GenerateAndTestListOfAllPossibleMoves()
         Dim goodMoves = possibleMoves.Where(Function(m) m.Score >= 3).OrderByDescending(Function(m) m.Score).ToList
         Dim workingBoard As New BejeweledBoard(squares)
         Dim tilesThatWillBeRemoved As HashSet(Of BejeweledTile) = workingBoard.GetTilesToRemove
@@ -61,6 +52,20 @@ Public Class BejeweledBoard
             End If
         Next
         Return movesToApply
+    End Function
+
+    Public Function GenerateAndTestListOfAllPossibleMoves() As List(Of BejeweledMove)
+        Dim possibleMoves As New List(Of BejeweledMove)
+        For x = 0 To tileCount - 1
+            For y = 0 To tileCount - 1
+                For Each direction In [Enum].GetValues(GetType(ArrowDirection))
+                    Dim bejeweledMove As BejeweledMove = New BejeweledMove(x, y, direction)
+                    bejeweledMove.TilesToRemoveAsResult = GetClonedBoardWithMoveApplied(bejeweledMove).GetTilesToRemove
+                    possibleMoves.Add(bejeweledMove)
+                Next
+            Next
+        Next
+        Return possibleMoves
     End Function
 
     Function IsValidBoard() As Boolean
